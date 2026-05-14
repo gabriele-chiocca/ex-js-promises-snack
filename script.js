@@ -35,24 +35,68 @@
 
 //Snack 2
 
-function lanciaDado(scelta) {
-  return new Promise((resolve, reject) => {
-    console.log('Lancio il dado');
+// function lanciaDado(scelta) {
+//   return new Promise((resolve, reject) => {
+//     console.log('Lancio il dado');
 
-    setTimeout(() => {
+//     setTimeout(() => {
+//       const valore = Math.floor(Math.random() * (6 - 1 + 1)) + 1;
+
+//       const verificaValore = valore % 2 == 0 ? 'pari' : 'dispari';
+
+//       if (scelta === verificaValore) {
+//         resolve(`Hai vinto, è uscito il numero ${valore}`);
+//       } else {
+//         reject(`Hai perso, è uscito il numero ${valore}`);
+//       }
+//     }, 3000);
+//   });
+// }
+
+// lanciaDado('pari')
+//   .then((risultato) => console.log(risultato))
+//   .catch((errore) => console.error(errore));
+
+//Snack 2 Bonus
+
+function creaLanciaDado() {
+  let lancioDado = '';
+
+  return function (scelta) {
+    return new Promise((resolve, reject) => {
+      console.log('Lancio il dado');
+
       const valore = Math.floor(Math.random() * (6 - 1 + 1)) + 1;
 
       const verificaValore = valore % 2 == 0 ? 'pari' : 'dispari';
 
-      if (scelta === verificaValore) {
-        resolve(`Hai vinto, è uscito il numero ${valore}`);
-      } else {
-        reject(`Hai perso, è uscito il numero ${valore}`);
-      }
-    }, 3000);
-  });
+      setTimeout(() => {
+        if (scelta === verificaValore && lancioDado === valore) {
+          console.log(`Incredibile`);
+          resolve(`Hai vinto, il numero è ${valore}`);
+        } else if (scelta === verificaValore) {
+          lancioDado = valore;
+          resolve(`Hai vinto, il numero è ${valore}`);
+        } else if (scelta !== verificaValore && lancioDado === valore) {
+          console.log(`Incredibile`);
+          reject(`Hai perso, il numero è ${valore}`);
+        } else {
+          lancioDado = valore;
+          reject(`Hai perso, il numero è ${valore}`);
+        }
+      }, 1000);
+    });
+  };
 }
 
-lanciaDado('pari')
-  .then((risultato) => console.log(risultato))
-  .catch((errore) => console.error(errore));
+const tiroIlDado = creaLanciaDado();
+
+const id = setInterval(() => {
+  tiroIlDado('pari')
+    .then((messaggio) => console.log(messaggio))
+    .catch((errore) => console.error(errore));
+}, 2000);
+
+setTimeout(() => {
+  clearInterval(id);
+}, 8000);
